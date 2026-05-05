@@ -1,0 +1,17 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment variables — NEVER commit your API key
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode
+.idea
+
+# Vercel
+.vercel

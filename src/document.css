@@ -1,0 +1,315 @@
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Color tokens (real hex — no CSS variables) ─────────────────────────
+   Text:        #111827  primary
+                #6B7280  secondary
+                #9CA3AF  tertiary
+   Border:      #E5E7EB  subtle
+                #D1D5DB  default
+                #9CA3AF  strong
+   Background:  #FFFFFF  surface
+                #F9FAFB  page / muted
+                #F3F4F6  recessed
+   Accent blue: #378ADD  base
+                #185FA5  dark
+                #E6F1FB  tint
+                #85B7EB  mid
+   ─────────────────────────────────────────────────────────────────────── */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #F9FAFB;
+  color: #111827;
+}
+
+/* ─── Page wrapper ───────────────────────────────────────────────────────── */
+.page-wrapper {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+}
+
+/* ─── App layout: form + panel side by side ──────────────────────────────── */
+.app-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ─── Form card ──────────────────────────────────────────────────────────── */
+.form-section {
+  width: 100%;
+  max-width: 520px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 2.5rem 2.25rem;
+  height: fit-content;
+}
+
+/* ─── Result panel ───────────────────────────────────────────────────────── */
+.result-panel {
+  flex: 1;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  height: fit-content;
+
+  /* Hidden by default — slides in from the right */
+  opacity: 0;
+  transform: translateX(16px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.result-panel--visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+.result-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.result-panel__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+}
+
+.result-panel__definition {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.result-panel__error {
+  font-size: 13px;
+  color: #DC2626;
+}
+
+.result-panel__placeholder {
+  font-size: 13px;
+  color: #9CA3AF;
+  font-style: italic;
+}
+
+.result-panel__loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.result-panel__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #E5E7EB;
+  border-top-color: #378ADD;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive: stack on narrow screens ────────────────────────────────── */
+@media (max-width: 720px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .form-section {
+    max-width: 100%;
+  }
+
+  .result-panel {
+    width: 100%;
+    transform: translateY(12px);
+  }
+
+  .result-panel--visible {
+    transform: translateY(0);
+  }
+}
+
+/* ─── Section title ──────────────────────────────────────────────────────── */
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin-bottom: 1.75rem;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+/* ─── Two-column grid ────────────────────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ─── Field group ────────────────────────────────────────────────────────── */
+.field-group {
+  margin-bottom: 1.75rem;
+}
+
+.field-group:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+/* ─── Input ──────────────────────────────────────────────────────────────── */
+.field-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  background: #FFFFFF;
+  font-family: inherit;
+  font-size: 14px;
+  color: #111827;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.field-input:hover {
+  border-color: #9CA3AF;
+}
+
+.field-input:focus {
+  border-color: #378ADD;
+  box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
+}
+
+/* ─── Annotation ─────────────────────────────────────────────────────────── */
+.annotation {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #9CA3AF;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Language pills ─────────────────────────────────────────────────────── */
+.lang-pills {
+  display: flex;
+  gap: 4px;
+}
+
+.lang-pill {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid #D1D5DB;
+  background: transparent;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.lang-pill:hover {
+  background: #F3F4F6;
+  color: #6B7280;
+  border-color: #9CA3AF;
+}
+
+.lang-pill.active {
+  background: #E6F1FB;
+  border-color: #85B7EB;
+  color: #0C447C;
+}
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+.popover-divider {
+  border: none;
+  border-top: 1px solid #F3F4F6;
+  margin: 12px 0;
+}
+
+/* ─── Example block ──────────────────────────────────────────────────────── */
+.popover-example {
+  background: #F9FAFB;
+  border-left: 2px solid #378ADD;
+  border-radius: 0 8px 8px 0;
+  padding: 9px 12px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.popover-example .example-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin-bottom: 4px;
+}
+
+.popover-example .example-text {
+  display: block;
+  color: #6B7280;
+}
+
+/* ─── Translate button ───────────────────────────────────────────────────── */
+.translate-btn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #3B82F6;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  margin-top: 10px;
+}
+
+.translate-btn:hover {
+  background-color: #2563EB;
+}
+
+.translate-btn:active {
+  background-color: #1D4ED8;
+}
+
+.translate-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
