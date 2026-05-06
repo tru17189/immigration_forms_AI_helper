@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTermTranslation } from './useTermTranslation'
+import { useFollowUp } from './followUpAiMessage'
 
 export type Language = 'en' | 'es' | 'pt'
 
@@ -25,11 +26,17 @@ interface Props {
   onTranslationReady: (data: { definition: string; example: string } | null) => void
   onLoadingChange: (loading: boolean) => void
   onError: (error: string | null) => void
+  onChatVisible: (chatVisible: boolean) => void
+  onFollowUp: (followUp: string | null) => void
+  onWasMessageReceived: (wasMessageReceived: boolean) => void
+  onSendReply: (sendReply: (userMessage: string, lang: Language) => Promise<string | null>) => void
 }
 
 const LANGUAGES: Language[] = ['en', 'es', 'pt']
 
-export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, onLoadingChange, onError }: Props) {
+export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, 
+    onLoadingChange, onError, onChatVisible, onFollowUp, onWasMessageReceived,
+    onSendReply}: Props) {
     const [formName, setFormName] = useState('')
     const [questionText, setQuestionText] = useState('')
     const [termId] = useState('def1')
@@ -40,6 +47,7 @@ export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, 
         formName
     )
 
+    const { getFollowUp, sendReply, loading: followUpLoading } = useFollowUp(questionText, formName)
     const handleSubmit = async () => {
         if (!questionText.trim()) return
         resetTranslations()
@@ -49,7 +57,17 @@ export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, 
         const result = await getTranslation(activeLang)
         onLoadingChange(false)
         if (result) {
+            onChatVisible(true)
             onTranslationReady(result)
+
+            // trigger the follow-up
+            const followUp = await getFollowUp(
+                `${result.definition} ${result.example}`,
+                activeLang
+            )
+            onFollowUp(followUp)
+            onWasMessageReceived(true)
+            onSendReply(sendReply)
         } else {
             onError(`Could not load ${activeLang} translation.`)
         }
@@ -75,7 +93,7 @@ export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, 
                 id="formName-input"
                 placeholder="Name of the form you are filling out"
                 value={formName}
-                onChange={(e) => setFormName(e.target.value)}
+                onChange={(e) => setFormName(e.target.value) }
                 style={{ marginBottom: '1rem' }}
             />
 
@@ -105,7 +123,7 @@ export function GeneralQuestion({ activeLang, onLangChange, onTranslationReady, 
                 onClick={handleSubmit}
                 disabled={!questionText.trim()}
             >
-                Translate
+                Clarify
             </button>
         </div>
     )

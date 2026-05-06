@@ -2,12 +2,17 @@ import './document.css'
 import { GeneralQuestion } from './GeneralQuestion'
 import type { Language } from './GeneralQuestion'
 import { useState } from 'react'
+import { UseChat } from './useChat'
 
 export default function Main() {
     const [lang, setLang] = useState<Language>('en')
     const [translation, setTranslation] = useState<{ definition: string; example: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [chatVisible, setChatVisible] = useState(false)
+    const [followUp, setFollowUp] = useState<string | null>(null)
+    const [wasMessageReceived, setWasMessageReceived] = useState(false)
+    const [sendReply, setSendReply] = useState<((userMessage: string, lang: Language) => Promise<string | null>) | null>(null)
 
     const panelVisible = loading || !!error || !!translation
 
@@ -28,6 +33,10 @@ export default function Main() {
                         onTranslationReady={setTranslation}
                         onLoadingChange={setLoading}
                         onError={setError}
+                        onChatVisible={setChatVisible}
+                        onFollowUp={setFollowUp}
+                        onWasMessageReceived={setWasMessageReceived}
+                        onSendReply={(fn) => setSendReply(() => fn)}
                     />
                 </div>
 
@@ -78,6 +87,17 @@ export default function Main() {
                     )}
                 </div>
             </div>
+
+            
+            {chatVisible && (
+                <UseChat 
+                    followUp={followUp}
+                    wasMessageReceived={wasMessageReceived}
+                    onWasMessageReceived={setWasMessageReceived}
+                    activeLanguage={lang}
+                    sendReply={sendReply}
+                />
+            )}
         </div>
     )
 }
